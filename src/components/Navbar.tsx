@@ -11,12 +11,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { ModeToggle } from '@/components/utils/mode-toggle'
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
+import { usePathname } from 'next/navigation'
 
 const navigations = [
   { name: 'Home', route: '/' },
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
   const { data: session } = useSession()
 
   return (
@@ -28,19 +31,22 @@ export default function Navbar() {
               NextStarter
             </Link>
           </div>
-          <div className="hidden md:flex items-center space-x-4">
-            <div>
 
-            {navigations.map((nav) => (
-              <Link
-                key={nav.name}
-                href={nav.route}
-                className="text-sm font-medium hover:underline"
-              >
-                {nav.name}
-              </Link>
-            ))}
-            </div>
+          <NavigationMenu className='hidden md:block'>
+            <NavigationMenuList>
+              {navigations.map((nav) => (
+                <NavigationMenuItem key={nav.name}>
+                  <NavigationMenuLink href={nav.route} className={`${navigationMenuTriggerStyle()} ${pathname === nav.route ? " bg-accent text-accent-foreground " : ""}`}>
+                    {nav.name}
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              ))}
+
+            </NavigationMenuList>
+          </NavigationMenu>
+
+          <div className="hidden md:flex items-center space-x-4">
+
             {session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -52,12 +58,12 @@ export default function Navbar() {
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem asChild>
                     <Link href="/profile">
-                    <User className="mr-2 h-4 w-4" />
+                      <User className="mr-2 h-4 w-4" />
                       Profile
-                      </Link>
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => signOut()}>
-                  <LogOut className="mr-2 h-4 w-4" />
+                    <LogOut className="mr-2 h-4 w-4" />
                     Log out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
